@@ -2,7 +2,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-# %matplotlib inline
 import seaborn as sns
 pd.pandas.set_option('display.max_columns', None)
 from sklearn.ensemble import RandomForestClassifier
@@ -19,7 +18,6 @@ st.title("Crystal-Structures")
 
 # Loading Data
 df = pd.read_csv('crystal_data.csv')
-# df.shape
 
 # nav
 nav = st.sidebar.radio("Navigation",["HOME","Prediction"])
@@ -32,19 +30,6 @@ if nav == "HOME" :
 
 if nav == "Prediction":
     # Inputs
-
-    ### Columns
-    # Compound - Compound name
-    # A - First element
-    # B - Second element
-    # In literature - Boolean True or False
-    # v(A) - Valency of A
-    # v(B) - Valency of B
-    # r(AXII)(Å) - Ionic radius of A cation
-    # r(AVI)(Å) - Ionic radius of B cation
-    # EN(A) - Average electronegativity value of A cation
-    # EN(B) - Average electronegativity value of B cation
-
     st.header("Inputs")
     on,tw,th,fo = st.columns(4)
     fi,si,se,on_ = st.columns(4)
@@ -69,18 +54,11 @@ if nav == "Prediction":
 
         val = {'Compound':"Pred",'A':"A",'B':"B",'In literature':"false",'v(A)':C,'v(B)':D,'r(AXII)(Å)':E,'r(AVI)(Å)':F,'r(BVI)(Å)':G,'EN(A)':H,'EN(B)':I,'l(A-O)(Å)':J,'l(B-O)(Å)':K,'ΔENR':L,'tG':M,'τ':"-",'μ':N,'Lowest distortion':"-"} 
         df = df.append(val, ignore_index=True)
-        df.info()
-        # There is not any 'NaN' value in the dataset but it seem there are lots of dashes('-') present in the different columns 
-        (df == '-').sum()
-        #  From here it's clear that dashes are present in 'v(A)', 'v(B), 'τ', and 'Lowest distortion' columns.
-        #     * 'Lowest distortion' is going to be our target column we can use entries with '-' in our testing phase, hence no need to think about handling of this column's  
-        #       data or we can also just remove these rows as the number of '-' is just 53 and we can't predict that our prediction is correct or not corresponding to these
-        #       columns.
-        #     * In case of 'τ' more than 50% of the entries are not present, that's why better than handling we should drop this column otherwise this can affect our results. 
+        
+        
+        
         df = df.drop(["τ"], axis=1)
-        # df.columns
-        print(len(df["v(A)"].unique()))
-        print(len(df["v(B)"].unique()))
+    
 
         val_a = pd.get_dummies(df['v(A)'], prefix="v(A)=", prefix_sep="")
         val_b = pd.get_dummies(df['v(B)'], prefix="v(B)=", prefix_sep="")
@@ -88,12 +66,10 @@ if nav == "Prediction":
 
         df = df.drop(["v(A)"], axis=1)
         df = df.drop(["v(B)"], axis=1)
-        # df.columns
+    
 
         df = df.drop(["In literature"], axis=1)
-        # df = df.drop(["Compound"], axis=1)
-        # df.columns
-
+        
         a_ = pd.get_dummies(df['A'], prefix="A=", prefix_sep="")
         b_ = pd.get_dummies(df['B'], prefix="B=", prefix_sep="")
         df = pd.concat([df, a_, b_], axis=1)
@@ -107,8 +83,6 @@ if nav == "Prediction":
         df = df.drop(["Compound"], axis=1)
         raw = raw.drop(["Compound"], axis=1)
         raw = raw.drop(["Lowest distortion"], axis=1)
-
-        (df == '-').sum().sum()
 
 
 
@@ -189,4 +163,3 @@ if nav == "Prediction":
         filtered_chart = chart.add_selection(selection).transform_filter(selection)
 
         st.altair_chart(filtered_chart, use_container_width=True)
-        
